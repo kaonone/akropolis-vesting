@@ -4,9 +4,12 @@ import 'openzeppelin-solidity/contracts/drafts/TokenVesting.sol';
 
 contract AkropolisVesting is TokenVesting {
 
+    IERC20 private token;
 
-    constructor (address _beneficiary, uint256 _start, uint256 _cliffDuration, uint256 _duration, bool _revocable) public 
-        TokenVesting(_beneficiary, _start, _cliffDuration, _duration, _revocable) {}
+    constructor (IERC20 _token, address _beneficiary, uint256 _start, uint256 _cliffDuration, uint256 _duration, bool _revocable) public 
+        TokenVesting(_beneficiary, _start, _cliffDuration, _duration, _revocable) {
+            token = _token;
+    }
 
     
     modifier onlyBeneficiary() {
@@ -14,14 +17,24 @@ contract AkropolisVesting is TokenVesting {
         _;
     }
 
-
     function isBeneficiary() public view returns (bool) {
         return msg.sender == beneficiary();
     }
 
-    function release(IERC20 token) public  onlyBeneficiary {
+     /**
+     * @notice Transfers vested tokens to beneficiary.
+     */
+
+    function release() public  onlyBeneficiary {
         super.release(token);
     }
 
+    /**
+     * @notice Allows the owner to revoke the vesting. Tokens already vested
+     * remain in the contract, the rest are returned to the owner.
+     */
 
+    function revoke() public {
+        super.revoke(token);
+    }
 }
