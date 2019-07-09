@@ -22,6 +22,10 @@ contract AkropolisVesting is TokenTimelock {
             return msg.sender == beneficiary();
         }
 
+        /**
+        * @notice Transfers tokens held by timelock to beneficiary.
+        */
+        
         function release() public onlyBeneficiary {
             super.release();
         }  
