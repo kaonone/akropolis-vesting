@@ -3,10 +3,12 @@ var AkropolisVesting = artifacts.require("./AkropolisVesting.sol");
 
 module.exports = function(deployer, network, accounts) {
     let owner = accounts[0];
-    let beneficiary = "0x0a59e9a535e179cf524440ebe34cf820e1e5ff68b139ac314f0b53cab3dabf57";
-    let start = 0;
-    let cliff = 0;
-    let duration = 0;
+
+    //mock data
+    let beneficiary = '0x2188eafbe04f79e1fc89a8191a816fc2bd514f89';
+    let start = 1563321600;
+    let cliff = 315360;
+    let duration = 31536000;
     console.log('owner of token contracts: ' + owner)
     deployer.deploy(AkropolisVesting, beneficiary, start, cliff, duration, false, {from:owner});
 };
