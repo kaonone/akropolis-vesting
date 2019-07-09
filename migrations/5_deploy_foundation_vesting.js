@@ -1,6 +1,8 @@
 var AkropolisVesting = artifacts.require("./AkropolisVesting.sol");
 
 
+//Foundation
+
 module.exports = function(deployer, network, accounts) {
     let owner = accounts[0];
 
