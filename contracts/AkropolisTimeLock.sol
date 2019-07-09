@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 import 'openzeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol';
 
-contract AkropolisVesting is TokenTimelock {
+contract AkropolisTimeLock is TokenTimelock {
 
         /**
         * @notice Constructor.
@@ -25,7 +25,7 @@ contract AkropolisVesting is TokenTimelock {
         /**
         * @notice Transfers tokens held by timelock to beneficiary.
         */
-        
+
         function release() public onlyBeneficiary {
             super.release();
         }  
