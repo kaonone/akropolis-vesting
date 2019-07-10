@@ -13,20 +13,11 @@ contract AkropolisTimeLock is TokenTimelock {
         constructor (IERC20 _token, address _beneficiary, uint256 _releaseTime) public
             TokenTimelock(_token, _beneficiary, _releaseTime) {}   
 
-        modifier onlyBeneficiary() {
-            require(isBeneficiary(), "Sender is not beneficiary");
-            _;
-        }
-
-        function isBeneficiary() public view returns (bool) {
-            return msg.sender == beneficiary();
-        }
-
         /**
         * @notice Transfers tokens held by timelock to beneficiary.
         */
 
-        function release() public onlyBeneficiary {
+        function release() public {
             super.release();
         }  
 }

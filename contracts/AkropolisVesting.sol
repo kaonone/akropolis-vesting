@@ -11,21 +11,12 @@ contract AkropolisVesting is TokenVesting {
             token = _token;
     }
 
-    
-    modifier onlyBeneficiary() {
-        require(isBeneficiary(), "Sender is not beneficiary");
-        _;
-    }
-
-    function isBeneficiary() public view returns (bool) {
-        return msg.sender == beneficiary();
-    }
 
      /**
      * @notice Transfers vested tokens to beneficiary.
      */
 
-    function release() public  onlyBeneficiary {
+    function release() public {
         super.release(token);
     }
 
