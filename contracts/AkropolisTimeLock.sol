@@ -12,12 +12,4 @@ contract AkropolisTimeLock is TokenTimelock {
 
         constructor (IERC20 _token, address _beneficiary, uint256 _releaseTime) public
             TokenTimelock(_token, _beneficiary, _releaseTime) {}   
-
-        /**
-        * @notice Transfers tokens held by timelock to beneficiary.
-        */
-
-        function release() public {
-            super.release();
-        }  
 }
