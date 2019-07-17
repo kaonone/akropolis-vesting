@@ -5,51 +5,51 @@ contract Beneficiaries {
 
     // VARIABLES
 
-    uint256 public beneficiarysGeneration;
-    uint256 public howManybeneficiarysDecide;
-    address[] public beneficiarys;
+    uint256 public beneficiariesGeneration;
+    uint256 public howManyBeneficiariesDecide;
+    address[] public beneficiaries;
     bytes32[] public allOperations;
     address internal insideCallSender;
     uint256 internal insideCallCount;
 
-    // Reverse lookup tables for beneficiarys and allOperations
-    mapping(address => uint) public beneficiarysIndices; // Starts from 1
+    // Reverse lookup tables for beneficiaries and allOperations
+    mapping(address => uint) public beneficiariesIndices; // Starts from 1
     mapping(bytes32 => uint) public allOperationsIndicies;
 
-    // beneficiarys voting mask per operations
+    // beneficiaries voting mask per operations
     mapping(bytes32 => uint256) public votesMaskByOperation;
     mapping(bytes32 => uint256) public votesCountByOperation;
 
     // EVENTS
 
-    event beneficiaryShipTransferred(address[] previousbeneficiarys, uint howManybeneficiarysDecide, address[] newbeneficiarys, uint newHowManybeneficiarysDecide);
-    event OperationCreated(bytes32 operation, uint howMany, uint beneficiarysCount, address proposer);
-    event OperationUpvoted(bytes32 operation, uint votes, uint howMany, uint beneficiarysCount, address upvoter);
-    event OperationPerformed(bytes32 operation, uint howMany, uint beneficiarysCount, address performer);
-    event OperationDownvoted(bytes32 operation, uint votes, uint beneficiarysCount,  address downvoter);
+    event beneficiaryShipTransferred(address[] previousbeneficiaries, uint howManyBeneficiariesDecide, address[] newBeneficiarys, uint newHowManybeneficiarysDecide);
+    event OperationCreated(bytes32 operation, uint howMany, uint beneficiariesCount, address proposer);
+    event OperationUpvoted(bytes32 operation, uint votes, uint howMany, uint beneficiariesCount, address upvoter);
+    event OperationPerformed(bytes32 operation, uint howMany, uint beneficiariesCount, address performer);
+    event OperationDownvoted(bytes32 operation, uint votes, uint beneficiariesCount,  address downvoter);
     event OperationCancelled(bytes32 operation, address lastCanceller);
     
     // ACCESSORS
 
-    function isbeneficiary(address wallet) public constant returns(bool) {
-        return beneficiarysIndices[wallet] > 0;
+    function isbeneficiary(address wallet) public view returns(bool) {
+        return beneficiariesIndices[wallet] > 0;
     }
 
-    function beneficiarysCount() public constant returns(uint) {
-        return beneficiarys.length;
+    function beneficiariesCount() public view returns(uint) {
+        return beneficiaries.length;
     }
 
-    function allOperationsCount() public constant returns(uint) {
+    function allOperationsCount() public view returns(uint) {
         return allOperations.length;
     }
 
     // MODIFIERS
 
     /**
-    * @dev Allows to perform method by any of the beneficiarys
+    * @dev Allows to perform method by any of the beneficiaries
     */
-    modifier onlyAnybeneficiary {
-        if (checkHowManybeneficiarys(1)) {
+    modifier onlyAnyBeneficiary {
+        if (checkHowManyBeneficiaries(1)) {
             bool update = (insideCallSender == address(0));
             if (update) {
                 insideCallSender = msg.sender;
@@ -64,14 +64,14 @@ contract Beneficiaries {
     }
 
     /**
-    * @dev Allows to perform method only after many beneficiarys call it with the same arguments
+    * @dev Allows to perform method only after many beneficiaries call it with the same arguments
     */
-    modifier onlyManybeneficiarys {
-        if (checkHowManybeneficiarys(howManybeneficiarysDecide)) {
+    modifier onlyManyBeneficiaries {
+        if (checkHowManyBeneficiaries(howManyBeneficiariesDecide)) {
             bool update = (insideCallSender == address(0));
             if (update) {
                 insideCallSender = msg.sender;
-                insideCallCount = howManybeneficiarysDecide;
+                insideCallCount = howManyBeneficiariesDecide;
             }
             _;
             if (update) {
@@ -82,14 +82,14 @@ contract Beneficiaries {
     }
 
     /**
-    * @dev Allows to perform method only after all beneficiarys call it with the same arguments
+    * @dev Allows to perform method only after all beneficiaries call it with the same arguments
     */
-    modifier onlyAllbeneficiarys {
-        if (checkHowManybeneficiarys(beneficiarys.length)) {
+    modifier onlyAllBeneficiaries {
+        if (checkHowManyBeneficiaries(beneficiaries.length)) {
             bool update = (insideCallSender == address(0));
             if (update) {
                 insideCallSender = msg.sender;
-                insideCallCount = beneficiarys.length;
+                insideCallCount = beneficiaries.length;
             }
             _;
             if (update) {
@@ -100,13 +100,13 @@ contract Beneficiaries {
     }
 
     /**
-    * @dev Allows to perform method only after some beneficiarys call it with the same arguments
+    * @dev Allows to perform method only after some beneficiaries call it with the same arguments
     */
-    modifier onlySomebeneficiarys(uint howMany) {
-        require(howMany > 0, "onlySomebeneficiarys: howMany argument is zero");
-        require(howMany <= beneficiarys.length, "onlySomebeneficiarys: howMany argument exceeds the number of beneficiarys");
+    modifier onlySomeBeneficiaries(uint howMany) {
+        require(howMany > 0, "onlySomeBeneficiaries: howMany argument is zero");
+        require(howMany <= beneficiaries.length, "onlySomeBeneficiaries: howMany argument exceeds the number of Beneficiaries");
         
-        if (checkHowManybeneficiarys(howMany)) {
+        if (checkHowManyBeneficiaries(howMany)) {
             bool update = (insideCallSender == address(0));
             if (update) {
                 insideCallSender = msg.sender;
@@ -123,41 +123,41 @@ contract Beneficiaries {
     // CONSTRUCTOR
 
     constructor() public {
-        beneficiarys.push(msg.sender);
-        beneficiarysIndices[msg.sender] = 1;
-        howManybeneficiarysDecide = 1;
+        beneficiaries.push(msg.sender);
+        beneficiariesIndices[msg.sender] = 1;
+        howManyBeneficiariesDecide = 1;
     }
 
     // INTERNAL METHODS
 
     /**
-     * @dev onlyManybeneficiarys modifier helper
+     * @dev onlyManybeneficiaries modifier helper
      */
-    function checkHowManybeneficiarys(uint howMany) internal returns(bool) {
+    function checkHowManyBeneficiaries(uint howMany) internal returns(bool) {
         if (insideCallSender == msg.sender) {
-            require(howMany <= insideCallCount, "checkHowManybeneficiarys: nested beneficiarys modifier check require more beneficiarys");
+            require(howMany <= insideCallCount, "checkHowManyBeneficiaries: nested beneficiaries modifier check require more beneficiarys");
             return true;
         }
 
-        uint beneficiaryIndex = beneficiarysIndices[msg.sender] - 1;
-        require(beneficiaryIndex < beneficiarys.length, "checkHowManybeneficiarys: msg.sender is not an beneficiary");
-        bytes32 operation = keccak256(msg.data, beneficiarysGeneration);
+        uint beneficiaryIndex = beneficiariesIndices[msg.sender] - 1;
+        require(beneficiaryIndex < beneficiaries.length, "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
+        bytes32 operation = keccak256(msg.data, beneficiariesGeneration);
 
-        require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManybeneficiarys: beneficiary already voted for the operation");
+        require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
         votesMaskByOperation[operation] |= (2 ** beneficiaryIndex);
         uint operationVotesCount = votesCountByOperation[operation] + 1;
         votesCountByOperation[operation] = operationVotesCount;
         if (operationVotesCount == 1) {
             allOperationsIndicies[operation] = allOperations.length;
             allOperations.push(operation);
-            emit OperationCreated(operation, howMany, beneficiarys.length, msg.sender);
+            emit OperationCreated(operation, howMany, beneficiaries.length, msg.sender);
         }
-        emit OperationUpvoted(operation, operationVotesCount, howMany, beneficiarys.length, msg.sender);
+        emit OperationUpvoted(operation, operationVotesCount, howMany, beneficiaries.length, msg.sender);
 
-        // If enough beneficiarys confirmed the same operation
+        // If enough beneficiaries confirmed the same operation
         if (votesCountByOperation[operation] == howMany) {
             deleteOperation(operation);
-            emit OperationPerformed(operation, howMany, beneficiarys.length, msg.sender);
+            emit OperationPerformed(operation, howMany, beneficiaries.length, msg.sender);
             return true;
         }
 
@@ -184,16 +184,16 @@ contract Beneficiaries {
     // PUBLIC METHODS
 
     /**
-    * @dev Allows beneficiarys to change their mind by cacnelling votesMaskByOperation operations
+    * @dev Allows beneficiaries to change their mind by cacnelling votesMaskByOperation operations
     * @param operation defines which operation to delete
     */
-    function cancelPending(bytes32 operation) public onlyAnybeneficiary {
-        uint beneficiaryIndex = beneficiarysIndices[msg.sender] - 1;
+    function cancelPending(bytes32 operation) public onlyAnyBeneficiary {
+        uint beneficiaryIndex = beneficiariesIndices[msg.sender] - 1;
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) != 0, "cancelPending: operation not found for this user");
         votesMaskByOperation[operation] &= ~(2 ** beneficiaryIndex);
         uint operationVotesCount = votesCountByOperation[operation] - 1;
         votesCountByOperation[operation] = operationVotesCount;
-        emit OperationDownvoted(operation, operationVotesCount, beneficiarys.length, msg.sender);
+        emit OperationDownvoted(operation, operationVotesCount, beneficiaries.length, msg.sender);
         if (operationVotesCount == 0) {
             deleteOperation(operation);
             emit OperationCancelled(operation, msg.sender);
@@ -201,39 +201,39 @@ contract Beneficiaries {
     }
 
     /**
-    * @dev Allows beneficiarys to change beneficiaryship
-    * @param newbeneficiarys defines array of addresses of new beneficiarys
+    * @dev Allows beneficiaries to change beneficiariesship
+    * @param newBeneficiaries defines array of addresses of new beneficiaries
     */
-    function transferbeneficiaryship(address[] newbeneficiarys) public {
-        transferbeneficiaryshipWithHowMany(newbeneficiarys, newbeneficiarys.length);
+    function transferBeneficiaryShip(address[] memory newBeneficiaries) public {
+        transferBeneficiaryShipWithHowMany(newBeneficiaries, newBeneficiaries.length);
     }
 
     /**
     * @dev Allows beneficiarys to change beneficiaryship
-    * @param newbeneficiarys defines array of addresses of new beneficiarys
-    * @param newHowManybeneficiarysDecide defines how many beneficiarys can decide
+    * @param newBeneficiaries defines array of addresses of new beneficiaries
+    * @param newHowManyBeneficiariesDecide defines how many beneficiaries can decide
     */
-    function transferbeneficiaryshipWithHowMany(address[] newbeneficiarys, uint256 newHowManybeneficiarysDecide) public onlyManybeneficiarys {
-        require(newbeneficiarys.length > 0, "transferbeneficiaryshipWithHowMany: beneficiarys array is empty");
-        require(newbeneficiarys.length <= 256, "transferbeneficiaryshipWithHowMany: beneficiarys count is greater then 256");
-        require(newHowManybeneficiarysDecide > 0, "transferbeneficiaryshipWithHowMany: newHowManybeneficiarysDecide equal to 0");
-        require(newHowManybeneficiarysDecide <= newbeneficiarys.length, "transferbeneficiaryshipWithHowMany: newHowManybeneficiarysDecide exceeds the number of beneficiarys");
+    function transferBeneficiaryShipWithHowMany(address[] memory newBeneficiaries, uint256 newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
+        require(newBeneficiaries.length > 0, "transferBeneficiaryShipWithHowMany: beneficiaries array is empty");
+        require(newBeneficiaries.length <= 256, "transferBeneficiaryshipWithHowMany: beneficiarys count is greater then 256");
+        require(newHowManyBeneficiariesDecide > 0, "transferBeneficiaryshipWithHowMany: newHowManybeneficiarysDecide equal to 0");
+        require(newHowManyBeneficiariesDecide <= newBeneficiaries.length, "transferBeneficiaryShipWithHowMany: newHowManybeneficiarysDecide exceeds the number of beneficiarys");
 
-        // Reset beneficiarys reverse lookup table
-        for (uint j = 0; j < beneficiarys.length; j++) {
-            delete beneficiarysIndices[beneficiarys[j]];
+        // Reset beneficiaries reverse lookup table
+        for (uint j = 0; j < beneficiaries.length; j++) {
+            delete beneficiariesIndices[beneficiaries[j]];
         }
-        for (uint i = 0; i < newbeneficiarys.length; i++) {
-            require(newbeneficiarys[i] != address(0), "transferbeneficiaryshipWithHowMany: beneficiarys array contains zero");
-            require(beneficiarysIndices[newbeneficiarys[i]] == 0, "transferbeneficiaryshipWithHowMany: beneficiarys array contains duplicates");
-            beneficiarysIndices[newbeneficiarys[i]] = i + 1;
+        for (uint i = 0; i < newBeneficiaries.length; i++) {
+            require(newBeneficiaries[i] != address(0), "transferBeneficiaryShipWithHowMany: beneficiaries array contains zero");
+            require(beneficiariesIndices[newBeneficiaries[i]] == 0, "transferBeneficiaryShipWithHowMany: beneficiaries array contains duplicates");
+            beneficiariesIndices[newBeneficiaries[i]] = i + 1;
         }
         
-        emit beneficiaryshipTransferred(beneficiarys, howManybeneficiarysDecide, newbeneficiarys, newHowManybeneficiarysDecide);
-        beneficiarys = newbeneficiarys;
-        howManybeneficiarysDecide = newHowManybeneficiarysDecide;
+        emit beneficiaryShipTransferred(beneficiaries, howManyBeneficiariesDecide, newBeneficiaries, newHowManyBeneficiariesDecide);
+        beneficiaries = newBeneficiaries;
+        howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
         allOperations.length = 0;
-        beneficiarysGeneration++;
+        beneficiariesGeneration++;
     }
 
 }
