@@ -141,7 +141,7 @@ contract Beneficiaries {
 
         uint beneficiaryIndex = beneficiariesIndices[msg.sender] - 1;
         require(beneficiaryIndex < beneficiaries.length, "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
-        bytes32 operation = keccak256(msg.data, beneficiariesGeneration);
+        bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
 
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
         votesMaskByOperation[operation] |= (2 ** beneficiaryIndex);
