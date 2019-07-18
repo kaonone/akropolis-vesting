@@ -23,10 +23,8 @@ contract TokenVestingProxy is UpgradeabilityProxy, TokenVesting, BeneficiaryOper
         UpgradeabilityProxy(_implementation, "")
         TokenVesting(_beneficiary, _start, _cliffDuration, _duration, false) public {
             token = _token;
-        
     }
     
-
     /**
     * @dev Upgrade the backing implementation of the proxy.
     * Only the group of beneficiaries can call this function.
