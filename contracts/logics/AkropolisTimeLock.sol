@@ -27,6 +27,10 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
             changeBeneficiary(beneficiaries[1]);
         }
 
+        /**
+            * @dev Allows beneficiaries to change beneficiary as default
+            * @param newBeneficiary defines array of addresses of new beneficiaries
+        */
         function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
             require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
             changeBeneficiary(_newBeneficiary);
