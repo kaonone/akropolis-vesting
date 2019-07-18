@@ -1,5 +1,5 @@
 pragma solidity ^0.5.0;
-import 'openzeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol';
+import '../openzeppelin/TokenTimelock.sol';
 
 //Beneficieries template
 import "../helpers/BeneficiaryOperations.sol";
@@ -24,6 +24,6 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         */
         function transferBeneficiaryShipWithHowMany(address[] memory newBeneficiaries, uint256 newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
             super.transferBeneficiaryShipWithHowMany(newBeneficiaries, newHowManyBeneficiariesDecide);
-            beneficiary = beneficiaries[1];
+            super.changeBeneficiary(beneficiaries[1]);
         }
 }

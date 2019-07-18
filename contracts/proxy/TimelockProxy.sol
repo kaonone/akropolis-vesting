@@ -4,7 +4,7 @@ pragma solidity ^0.5.0;
 import "zos-lib/contracts/upgradeability/UpgradeabilityProxy.sol";
 
 //Timelock Template
-import 'openzeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol';
+import '../openzeppelin/TokenTimelock.sol';
 
 //Beneficieries template
 import "../helpers/BeneficiaryOperations.sol";
@@ -24,7 +24,7 @@ contract TimelockProxy is UpgradeabilityProxy, TokenTimelock, BeneficiaryOperati
 
     /**
     * @dev Upgrade the backing implementation of the proxy.
-    * Only the admin can call this function.
+    * Only the group of beneficiaries can call this function.
     * @param newImplementation Address of the new implementation.
     */
     function upgradeTo(address newImplementation) public onlyManyBeneficiaries  {

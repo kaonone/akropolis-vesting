@@ -31,8 +31,12 @@ contract BeneficiaryOperations {
     
     // ACCESSORS
 
-    function inBeneficiaries(address wallet) public view returns(bool) {
+    function isExistBeneficiary(address wallet) public view returns(bool) {
         return beneficiariesIndices[wallet] > 0;
+    }
+
+    function beneficiaryIndices(address wallet) public view returns(uint256) {
+        return beneficiariesIndices[wallet];
     }
 
     function beneficiariesCount() public view returns(uint) {

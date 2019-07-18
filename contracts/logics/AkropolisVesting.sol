@@ -10,8 +10,6 @@ contract AkropolisVesting is TokenVesting {
         TokenVesting(_beneficiary, _start, _cliffDuration, _duration, _revocable) {
             token = _token;
     }
-
-
      /**
      * @notice Transfers vested tokens to beneficiary.
      */
