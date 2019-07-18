@@ -24,6 +24,11 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         */
         function transferBeneficiaryShipWithHowMany(address[] memory newBeneficiaries, uint256 newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
             super.transferBeneficiaryShipWithHowMany(newBeneficiaries, newHowManyBeneficiariesDecide);
-            super.changeBeneficiary(beneficiaries[1]);
+            changeBeneficiary(beneficiaries[1]);
+        }
+
+        function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
+            require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
+            changeBeneficiary(_newBeneficiary);
         }
 }
