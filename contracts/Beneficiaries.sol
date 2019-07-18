@@ -209,7 +209,7 @@ contract Beneficiaries {
     }
 
     /**
-    * @dev Allows beneficiarys to change beneficiaryship
+    * @dev Allows beneficiaries to change beneficiaryShip
     * @param newBeneficiaries defines array of addresses of new beneficiaries
     * @param newHowManyBeneficiariesDecide defines how many beneficiaries can decide
     */
