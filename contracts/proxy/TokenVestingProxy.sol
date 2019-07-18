@@ -4,23 +4,27 @@ pragma solidity ^0.5.0;
 import "zos-lib/contracts/upgradeability/UpgradeabilityProxy.sol";
 
 //Timelock Template
-import '../openzeppelin/TokenTimelock.sol';
+import '../openzeppelin/TokenVesting.sol';
 
 //Beneficieries template
 import "../helpers/BeneficiaryOperations.sol";
 
 
 /**
-* @title TimelockProxy
-* @notice A proxy contract that serves the latest implementation of TimelockProxy.
+* @title TokenVestingProxy
+* @notice A proxy contract that serves the latest implementation of TokenVestingProxy.
 */
 
-contract TimelockProxy is UpgradeabilityProxy, TokenTimelock, BeneficiaryOperations {
+contract TokenVestingProxy is UpgradeabilityProxy, TokenVesting, BeneficiaryOperations {
 
+    IERC20 private token;
 
-    constructor (address _implementation, IERC20 _token, address _beneficiary, uint256 _releaseTime)
-        UpgradeabilityProxy(_implementation, "") 
-        TokenTimelock(_token, msg.sender, _releaseTime) public  {} 
+    constructor (address _implementation, IERC20 _token, address _beneficiary, uint256 _start, uint256 _cliffDuration, uint256 _duration)
+        UpgradeabilityProxy(_implementation, "")
+        TokenVesting(_beneficiary, _start, _cliffDuration, _duration, false) public {
+            token = _token;
+        
+    }
     
 
     /**

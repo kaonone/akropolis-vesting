@@ -19,17 +19,17 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
 
          /**
             * @dev Allows beneficiaries to change beneficiaryShip and set first beneficiary as default
-            * @param newBeneficiaries defines array of addresses of new beneficiaries
-            * @param newHowManyBeneficiariesDecide defines how many beneficiaries can decide
+            * @param _newBeneficiaries defines array of addresses of new beneficiaries
+            * @param _newHowManyBeneficiariesDecide defines how many beneficiaries can decide
         */
-        function transferBeneficiaryShipWithHowMany(address[] memory newBeneficiaries, uint256 newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
-            super.transferBeneficiaryShipWithHowMany(newBeneficiaries, newHowManyBeneficiariesDecide);
+        function transferBeneficiaryShipWithHowMany(address[] memory _newBeneficiaries, uint256 _newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
+            super.transferBeneficiaryShipWithHowMany(_newBeneficiaries, _newHowManyBeneficiariesDecide);
             changeBeneficiary(beneficiaries[1]);
         }
 
         /**
             * @dev Allows beneficiaries to change beneficiary as default
-            * @param newBeneficiary defines array of addresses of new beneficiaries
+            * @param _newBeneficiary defines array of addresses of new beneficiaries
         */
         function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
             require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
