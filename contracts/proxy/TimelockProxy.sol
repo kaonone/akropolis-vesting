@@ -18,9 +18,8 @@ import "../helpers/BeneficiaryOperations.sol";
 contract TimelockProxy is UpgradeabilityProxy, TokenTimelock, BeneficiaryOperations {
 
 
-    constructor (ddress _implementation, IERC20 _token, address _beneficiary, uint256 _releaseTime)
-        UpgradeabilityProxy(_implementation) 
-        TokenTimelock(_token, _beneficiary, _releaseTime) public  {} 
+    constructor (address _implementation, IERC20 _token, address _beneficiary, uint256 _releaseTime)
+        UpgradeabilityProxy(_implementation, "") TokenTimelock(_token, msg.sender, _releaseTime) public  {} 
     
 
     /**
@@ -28,7 +27,7 @@ contract TimelockProxy is UpgradeabilityProxy, TokenTimelock, BeneficiaryOperati
     * Only the admin can call this function.
     * @param newImplementation Address of the new implementation.
     */
-    function upgradeTo(address newImplementation) public {
+    function upgradeTo(address newImplementation) public onlyManyBeneficiaries  {
         _upgradeTo(newImplementation);
     }
 
