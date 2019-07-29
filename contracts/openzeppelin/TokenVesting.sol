@@ -171,4 +171,12 @@ contract TokenVesting is Ownable {
             return totalBalance.mul(block.timestamp.sub(_start)).div(_duration);
         }
     }
+
+    /**
+     * @return change the beneficiary of tokens
+     */
+
+    function changeBeneficiary(address _newBeneficiary) public {
+        _beneficiary = _newBeneficiary;
+    }
 }
