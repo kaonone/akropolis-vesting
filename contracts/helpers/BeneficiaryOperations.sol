@@ -1,8 +1,10 @@
 pragma solidity ^0.5.0;
 
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract BeneficiaryOperations {
 
+    using SafeMath for uint256;
     // VARIABLES
 
     uint256 public beneficiariesGeneration;
