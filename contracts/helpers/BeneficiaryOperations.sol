@@ -145,13 +145,13 @@ contract BeneficiaryOperations {
             return true;
         }
 
-        uint beneficiaryIndex = beneficiariesIndices[msg.sender] - 1;
+        uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
         require(beneficiaryIndex < beneficiaries.length, "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
 
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
         votesMaskByOperation[operation] |= (2 ** beneficiaryIndex);
-        uint operationVotesCount = votesCountByOperation[operation] + 1;
+        uint operationVotesCount = votesCountByOperation[operation].add(1);
         votesCountByOperation[operation] = operationVotesCount;
         if (operationVotesCount == 1) {
             allOperationsIndicies[operation] = allOperations.length;
@@ -194,10 +194,10 @@ contract BeneficiaryOperations {
     * @param operation defines which operation to delete
     */
     function cancelPending(bytes32 operation) public onlyAnyBeneficiary {
-        uint beneficiaryIndex = beneficiariesIndices[msg.sender] - 1;
+        uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) != 0, "cancelPending: operation not found for this user");
         votesMaskByOperation[operation] &= ~(2 ** beneficiaryIndex);
-        uint operationVotesCount = votesCountByOperation[operation] - 1;
+        uint operationVotesCount = votesCountByOperation[operation].sub(1);
         votesCountByOperation[operation] = operationVotesCount;
         emit OperationDownvoted(operation, operationVotesCount, beneficiaries.length, msg.sender);
         if (operationVotesCount == 0) {
