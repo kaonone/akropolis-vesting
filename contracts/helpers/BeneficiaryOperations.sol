@@ -5,6 +5,8 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract BeneficiaryOperations {
 
     using SafeMath for uint256;
+
+    using SafeMath for uint8;
     // VARIABLES
 
     uint256 public beneficiariesGeneration;
@@ -15,7 +17,7 @@ contract BeneficiaryOperations {
     uint256 internal insideCallCount;
 
     // Reverse lookup tables for beneficiaries and allOperations
-    mapping(address => uint8) public beneficiariesIndices; // Starts from 1
+    mapping(address => uint) public beneficiariesIndices; // Starts from 1
     mapping(bytes32 => uint) public allOperationsIndicies;
 
     // beneficiaries voting mask per operations
@@ -24,7 +26,7 @@ contract BeneficiaryOperations {
 
     // EVENTS
 
-    event beneficiaryShipTransferred(address[] previousbeneficiaries, uint howManyBeneficiariesDecide, address[] newBeneficiarys, uint newHowManybeneficiarysDecide);
+    event BeneficiaryshipTransferred(address[] previousbeneficiaries, uint howManyBeneficiariesDecide, address[] newBeneficiaries, uint newHowManybeneficiarysDecide);
     event OperationCreated(bytes32 operation, uint howMany, uint beneficiariesCount, address proposer);
     event OperationUpvoted(bytes32 operation, uint votes, uint howMany, uint beneficiariesCount, address upvoter);
     event OperationPerformed(bytes32 operation, uint howMany, uint beneficiariesCount, address performer);
@@ -37,9 +39,6 @@ contract BeneficiaryOperations {
         return beneficiariesIndices[wallet] > 0;
     }
 
-    function beneficiaryIndices(address wallet) public view returns(uint256) {
-        return beneficiariesIndices[wallet];
-    }
 
     function beneficiariesCount() public view returns(uint) {
         return beneficiaries.length;
@@ -236,11 +235,15 @@ contract BeneficiaryOperations {
             beneficiariesIndices[newBeneficiaries[i]] = i + 1;
         }
         
-        emit beneficiaryShipTransferred(beneficiaries, howManyBeneficiariesDecide, newBeneficiaries, newHowManyBeneficiariesDecide);
+        emit BeneficiaryshipTransferred(beneficiaries, howManyBeneficiariesDecide, newBeneficiaries, newHowManyBeneficiariesDecide);
         beneficiaries = newBeneficiaries;
         howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
+
+        for (uint i; i<allOperations.length; i++) {
+            delete(allOperationsIndicies[allOperations[i]]);
+        }
         allOperations.length = 0;
-        allOperationsIndicies = 0;
+       
         beneficiariesGeneration++;
     }
 
