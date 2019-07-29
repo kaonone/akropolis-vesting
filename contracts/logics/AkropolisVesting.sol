@@ -40,7 +40,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
 
     /**
         * @dev Allows beneficiaries to change beneficiary as default
-         * @param _newBeneficiary defines array of addresses of new beneficiaries
+         * @param _newBeneficiary defines address of new beneficiary
     */
     function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
         require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
@@ -48,11 +48,18 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
         emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 
+    /**
+        * @dev Set pending Beneficiary address
+        * @param _newBeneficiary defines address of new beneficiary
+    */
     function _setPendingBeneficiary(address _newBeneficiary) internal {
         require(_newBeneficiary  != address(0), "Invalid address.");
         pendingBeneficiary = _newBeneficiary;
     }
 
+    /**
+        * @dev Claim Beneficiary
+    */
     function claimBeneficiary() public {
         require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
         super.changeBeneficiary(pendingBeneficiary);

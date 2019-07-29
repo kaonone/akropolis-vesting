@@ -17,7 +17,7 @@ contract BeneficiaryOperations {
     uint256 internal insideCallCount;
 
     // Reverse lookup tables for beneficiaries and allOperations
-    mapping(address => uint8) public beneficiariesIndices; // Starts from 1
+    mapping(address => uint8) public beneficiariesIndices; // Starts from 1, size 255
     mapping(bytes32 => uint) public allOperationsIndicies;
 
     // beneficiaries voting mask per operations
