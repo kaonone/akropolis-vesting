@@ -44,6 +44,7 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         }
 
         function _setPendingBeneficiary(address _newBeneficiary) internal {
+            require(_newBeneficiary  != address(0), "Invalid address.");
             pendingBeneficiary = _newBeneficiary;
         }
 

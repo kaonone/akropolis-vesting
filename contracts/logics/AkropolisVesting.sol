@@ -9,6 +9,11 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
 
     IERC20 private token;
 
+    address private pendingBeneficiary;
+
+    event LogBeneficiaryTransferProposed(address _beneficiary);
+    event LogBeneficiaryTransfered(address _beneficiary);
+
     constructor (IERC20 _token, address _beneficiary, uint256 _start, uint256 _cliffDuration, uint256 _duration, bool _revocable) public 
         TokenVesting(_beneficiary, _start, _cliffDuration, _duration, _revocable) {
             token = _token;
@@ -35,10 +40,23 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
 
     /**
         * @dev Allows beneficiaries to change beneficiary as default
-        * @param _newBeneficiary defines array of addresses of new beneficiaries
+         * @param _newBeneficiary defines array of addresses of new beneficiaries
     */
     function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
         require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
-        changeBeneficiary(_newBeneficiary);
+        _setPendingBeneficiary(_newBeneficiary);
+        emit LogBeneficiaryTransferProposed(_newBeneficiary);
+    }
+
+    function _setPendingBeneficiary(address _newBeneficiary) internal {
+        require(_newBeneficiary  != address(0), "Invalid address.");
+        pendingBeneficiary = _newBeneficiary;
+    }
+
+    function claimBeneficiary() public {
+        require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+        super.changeBeneficiary(pendingBeneficiary);
+        emit LogBeneficiaryTransfered(pendingBeneficiary);
+        pendingBeneficiary = address(0);
     }
 }
