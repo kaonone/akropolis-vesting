@@ -15,7 +15,7 @@ contract BeneficiaryOperations {
     uint256 internal insideCallCount;
 
     // Reverse lookup tables for beneficiaries and allOperations
-    mapping(address => uint) public beneficiariesIndices; // Starts from 1
+    mapping(address => uint8) public beneficiariesIndices; // Starts from 1
     mapping(bytes32 => uint) public allOperationsIndicies;
 
     // beneficiaries voting mask per operations
@@ -145,6 +145,7 @@ contract BeneficiaryOperations {
             return true;
         }
         uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
+        
         require((beneficiaryIndex >= 0) && (beneficiaryIndex < beneficiaries.length), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
         
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
