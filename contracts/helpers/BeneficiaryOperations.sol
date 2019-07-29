@@ -144,9 +144,9 @@ contract BeneficiaryOperations {
             require(howMany <= insideCallCount, "checkHowManyBeneficiaries: nested beneficiaries modifier check require more beneficiarys");
             return true;
         }
-
         uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
-        require(beneficiaryIndex < beneficiaries.length, "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
+        require((beneficiaryIndex >= 0) && (beneficiaryIndex < beneficiaries.length), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
+        
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
 
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
