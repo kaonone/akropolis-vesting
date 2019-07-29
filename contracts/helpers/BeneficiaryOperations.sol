@@ -240,6 +240,7 @@ contract BeneficiaryOperations {
         beneficiaries = newBeneficiaries;
         howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
         allOperations.length = 0;
+        allOperationsIndicies = 0;
         beneficiariesGeneration++;
     }
 
