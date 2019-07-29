@@ -17,7 +17,7 @@ contract BeneficiaryOperations {
     uint256 internal insideCallCount;
 
     // Reverse lookup tables for beneficiaries and allOperations
-    mapping(address => uint) public beneficiariesIndices; // Starts from 1
+    mapping(address => uint8) public beneficiariesIndices; // Starts from 1
     mapping(bytes32 => uint) public allOperationsIndicies;
 
     // beneficiaries voting mask per operations
@@ -232,7 +232,7 @@ contract BeneficiaryOperations {
         for (uint i = 0; i < newBeneficiaries.length; i++) {
             require(newBeneficiaries[i] != address(0), "transferBeneficiaryShipWithHowMany: beneficiaries array contains zero");
             require(beneficiariesIndices[newBeneficiaries[i]] == 0, "transferBeneficiaryShipWithHowMany: beneficiaries array contains duplicates");
-            beneficiariesIndices[newBeneficiaries[i]] = i + 1;
+            beneficiariesIndices[newBeneficiaries[i]] = uint8(i.add(1));
         }
         
         emit BeneficiaryshipTransferred(beneficiaries, howManyBeneficiariesDecide, newBeneficiaries, newHowManyBeneficiariesDecide);
