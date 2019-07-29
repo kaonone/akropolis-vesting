@@ -12,12 +12,14 @@ contract TokenTimelock {
 
     // ERC20 basic token contract being held
     IERC20 private _token;
-
-    // beneficiary of tokens after they are released
-    address private _beneficiary;
-
+    
     // timestamp when token release is enabled
     uint256 private _releaseTime;
+    
+    // beneficiary of tokens after they are released
+    address internal _beneficiary;
+
+    
 
     constructor (IERC20 token, address beneficiary, uint256 releaseTime) public {
         // solhint-disable-next-line not-rely-on-time

@@ -6,6 +6,12 @@ import "../helpers/BeneficiaryOperations.sol";
 
 contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
 
+        address private pendingBeneficiary;
+
+
+        event LogBeneficiaryTransferProposed(address _beneficiary);
+        event LogBeneficiaryTransfered(address _beneficiary);
+
         /**
         * @notice Constructor.
         * @param _token  Address of AKRO token
@@ -33,6 +39,18 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         */
         function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
             require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
-            changeBeneficiary(_newBeneficiary);
+            _setPendingBeneficiary(_newBeneficiary);
+            emit LogBeneficiaryTransferProposed(_newBeneficiary);
+        }
+
+        function _setPendingBeneficiary(address _newBeneficiary) internal {
+            pendingBeneficiary = _newBeneficiary;
+        }
+
+        function claimBeneficiary() public {
+            require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+            super.changeBeneficiary(pendingBeneficiary);
+            emit LogBeneficiaryTransfered(pendingBeneficiary);
+            pendingBeneficiary = address(0);
         }
 }
