@@ -35,7 +35,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     
     function transferBeneficiaryShipWithHowMany(address[] memory _newBeneficiaries, uint256 _newHowManyBeneficiariesDecide) public  {
         super.transferBeneficiaryShipWithHowMany(_newBeneficiaries, _newHowManyBeneficiariesDecide);
-        changeBeneficiary(beneficiaries[0]);
+        _setPendingBeneficiary(beneficiaries[0]);
     }
 
     /**
@@ -45,7 +45,6 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
         require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
         _setPendingBeneficiary(_newBeneficiary);
-        emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 
     /**
@@ -55,6 +54,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     function _setPendingBeneficiary(address _newBeneficiary) internal {
         require(_newBeneficiary  != address(0), "Invalid address.");
         pendingBeneficiary = _newBeneficiary;
+        emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 
     /**
