@@ -180,7 +180,7 @@ contract BeneficiaryOperations {
             allOperations[index] = allOperations[allOperations.length - 1];
             allOperationsIndicies[allOperations[index]] = index;
         }
-        allOperations.length--;
+        allOperations.length = allOperations.length.sub(1);
 
         delete votesMaskByOperation[operation];
         delete votesCountByOperation[operation];
