@@ -143,8 +143,8 @@ contract BeneficiaryOperations {
             require(howMany <= insideCallCount, "checkHowManyBeneficiaries: nested beneficiaries modifier check require more beneficiarys");
             return true;
         }
-        uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
         
+        uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
         require((beneficiaryIndex >= 0) && (beneficiaryIndex < beneficiaries.length), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
         
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
@@ -239,9 +239,12 @@ contract BeneficiaryOperations {
         beneficiaries = newBeneficiaries;
         howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
 
-        for (uint i; i<allOperations.length; i++) {
+        for (uint i=0; i<allOperations.length; i.add(1)) {
             delete(allOperationsIndicies[allOperations[i]]);
+            delete(votesMaskByOperation[allOperations[i]]);
+            delete(votesCountByOperation[allOperations[i]]);
         }
+
         allOperations.length = 0;
        
         beneficiariesGeneration++;
