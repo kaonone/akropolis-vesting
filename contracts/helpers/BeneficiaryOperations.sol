@@ -239,7 +239,7 @@ contract BeneficiaryOperations {
         beneficiaries = newBeneficiaries;
         howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
 
-        for (uint i=0; i<allOperations.length; i.add(1)) {
+        for (uint i=0; i<allOperations.length; i++) {
             delete(allOperationsIndicies[allOperations[i]]);
             delete(votesMaskByOperation[allOperations[i]]);
             delete(votesCountByOperation[allOperations[i]]);
