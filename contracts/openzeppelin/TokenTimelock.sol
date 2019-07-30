@@ -45,7 +45,7 @@ contract TokenTimelock {
      * @return change the beneficiary of tokens
      */
 
-    function changeBeneficiary(address _newBeneficiary) internal {
+    function changeBeneficiary(address _newBeneficiary) public {
         _beneficiary = _newBeneficiary;
     }
 
