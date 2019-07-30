@@ -144,8 +144,10 @@ contract BeneficiaryOperations {
             return true;
         }
         
+
+        require((isExistBeneficiary(msg.sender) && (beneficiariesIndices[msg.sender] <= beneficiaries.length)), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
+
         uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
-        require((beneficiaryIndex >= 0) && (beneficiaryIndex < beneficiaries.length), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
         
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
 
@@ -194,6 +196,9 @@ contract BeneficiaryOperations {
     * @param operation defines which operation to delete
     */
     function cancelPending(bytes32 operation) public onlyAnyBeneficiary {
+
+        require((isExistBeneficiary(msg.sender) && (beneficiariesIndices[msg.sender] <= beneficiaries.length)), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
+
         uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) != 0, "cancelPending: operation not found for this user");
         votesMaskByOperation[operation] &= ~(2 ** beneficiaryIndex);
