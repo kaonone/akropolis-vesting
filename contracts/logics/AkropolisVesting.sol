@@ -35,7 +35,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     
     function transferBeneficiaryShipWithHowMany(address[] memory _newBeneficiaries, uint256 _newHowManyBeneficiariesDecide) public  {
         super.transferBeneficiaryShipWithHowMany(_newBeneficiaries, _newHowManyBeneficiariesDecide);
-        changeBeneficiary(beneficiaries[1]);
+        changeBeneficiary(beneficiaries[0]);
     }
 
     /**
