@@ -226,7 +226,7 @@ contract BeneficiaryOperations {
         require(newHowManyBeneficiariesDecide <= newBeneficiaries.length, "transferBeneficiaryShipWithHowMany: newHowManybeneficiarysDecide exceeds the number of beneficiarys");
 
         // Reset beneficiaries reverse lookup table
-        for (uint j = 0; j < beneficiaries.length; j++) {
+        for (uint j = 1; j <= beneficiaries.length; j++) {
             delete beneficiariesIndices[beneficiaries[j]];
         }
         for (uint i = 0; i < newBeneficiaries.length; i++) {
