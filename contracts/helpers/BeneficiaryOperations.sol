@@ -1,6 +1,9 @@
 /*
   Copyright Bitclave, 2018
+
+  It's modified contract MultiOwnable from https://github.com/bitclave/Multiownable
 */
+
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
