@@ -26,7 +26,24 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     function release() public {
         super.release(token);
     }
+    
+    // MODIFIERS
+    /**
+    * @dev Allows to perform method by existing beneficiary
+    */
+    modifier onlyExistingBeneficiary(address _beneficiary) {
+        require(isExistBeneficiary(_beneficiary), "address is not in beneficiary array");
+        _;
+    }
 
+    /**
+    * @dev Allows to perform method by pending beneficiary
+    */
+
+    modifier onlyPendingBeneficiary {
+        require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+        _;
+    }
      /**
         * @dev Allows beneficiaries to change beneficiaryShip and set first beneficiary as default
         * @param _newBeneficiaries defines array of addresses of new beneficiaries
@@ -43,27 +60,28 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
          * @param _newBeneficiary defines address of new beneficiary
     */
     function changeBeneficiary(address _newBeneficiary) public onlyManyBeneficiaries {
-        require(isExistBeneficiary(_newBeneficiary), "address is not in beneficiary array");
         _setPendingBeneficiary(_newBeneficiary);
-    }
-
-    /**
-        * @dev Set pending Beneficiary address
-        * @param _newBeneficiary defines address of new beneficiary
-    */
-    function _setPendingBeneficiary(address _newBeneficiary) internal {
-        require(_newBeneficiary  != address(0), "Invalid address.");
-        pendingBeneficiary = _newBeneficiary;
-        emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 
     /**
         * @dev Claim Beneficiary
     */
-    function claimBeneficiary() public {
-        require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+    function claimBeneficiary() public onlyPendingBeneficiary {
         super.changeBeneficiary(pendingBeneficiary);
         emit LogBeneficiaryTransfered(pendingBeneficiary);
         pendingBeneficiary = address(0);
+    }
+
+    /*
+     * Internal Functions
+     *
+     */
+    /**
+        * @dev Set pending Beneficiary address
+        * @param _newBeneficiary defines address of new beneficiary
+    */
+    function _setPendingBeneficiary(address _newBeneficiary) internal onlyExistingBeneficiary(_newBeneficiary) {
+        pendingBeneficiary = _newBeneficiary;
+        emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 }
