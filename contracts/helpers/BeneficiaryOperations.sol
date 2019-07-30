@@ -1,3 +1,6 @@
+/*
+  Copyright Bitclave, 2018
+*/
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
