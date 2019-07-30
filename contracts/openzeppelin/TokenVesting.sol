@@ -24,7 +24,7 @@ contract TokenVesting is Ownable {
     event TokenVestingRevoked(address token);
 
     // beneficiary of tokens after they are released
-    address internal _beneficiary;
+    address private _beneficiary;
 
     // Durations and timestamps are expressed in UNIX time, the same units as block.timestamp.
     uint256 private _cliff;
@@ -172,11 +172,11 @@ contract TokenVesting is Ownable {
         }
     }
 
-    /**
+     /**
      * @return change the beneficiary of tokens
      */
 
-    function changeBeneficiary(address _newBeneficiary) public {
+    function changeBeneficiary(address _newBeneficiary) internal {
         _beneficiary = _newBeneficiary;
     }
 }
