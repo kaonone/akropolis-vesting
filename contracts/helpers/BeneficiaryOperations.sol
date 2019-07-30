@@ -1,6 +1,6 @@
 /*
+  License: MIT
   Copyright Bitclave, 2018
-
   It's modified contract MultiOwnable from https://github.com/bitclave/Multiownable
 */
 
