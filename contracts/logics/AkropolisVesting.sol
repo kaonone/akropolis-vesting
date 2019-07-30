@@ -33,7 +33,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
         * @param _newHowManyBeneficiariesDecide defines how many beneficiaries can decide
     */
     
-    function transferBeneficiaryShipWithHowMany(address[] memory _newBeneficiaries, uint256 _newHowManyBeneficiariesDecide) public onlyManyBeneficiaries {
+    function transferBeneficiaryShipWithHowMany(address[] memory _newBeneficiaries, uint256 _newHowManyBeneficiariesDecide) public  {
         super.transferBeneficiaryShipWithHowMany(_newBeneficiaries, _newHowManyBeneficiariesDecide);
         changeBeneficiary(beneficiaries[1]);
     }
