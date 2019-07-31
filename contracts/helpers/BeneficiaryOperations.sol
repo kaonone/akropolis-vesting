@@ -185,7 +185,7 @@ contract BeneficiaryOperations {
     function deleteOperation(bytes32 operation) internal {
         uint index = allOperationsIndicies[operation];
         if (index < allOperations.length - 1) { // Not last
-            allOperations[index] = allOperations[allOperations.length - 1];
+            allOperations[index] = allOperations[allOperations.length.sub(1)];
             allOperationsIndicies[allOperations[index]] = index;
         }
         allOperations.length = allOperations.length.sub(1);
