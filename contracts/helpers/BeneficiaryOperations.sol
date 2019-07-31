@@ -221,7 +221,7 @@ contract BeneficiaryOperations {
     // PUBLIC METHODS
 
     /**
-    * @dev Allows beneficiaries to change their mind by cacnelling votesMaskByOperation operations
+    * @dev Allows beneficiaries to change their mind by cancelling votesMaskByOperation operations
     * @param operation defines which operation to delete
     */
     function cancelPending(bytes32 operation) public onlyAnyBeneficiary {
@@ -238,6 +238,24 @@ contract BeneficiaryOperations {
             deleteOperation(operation);
             emit OperationCancelled(operation, msg.sender);
         }
+    }
+
+    /**
+    * @dev Allows beneficiaries to change their mind by cancelling all operations
+    */
+
+    function cancelAllPending() public onlyAnyBeneficiary {
+        for (uint i=0; i<allOperations.length; i++) {
+            delete(allOperationsIndicies[allOperations[i]]);
+            delete(votesMaskByOperation[allOperations[i]]);
+            delete(votesCountByOperation[allOperations[i]]);
+            //delete operation->beneficiaryIndex
+            delete(operationsByBeneficiaryIndex[allOperations[i]]);
+        }
+
+        allOperations.length = 0;
+        //delete operations count for beneficiary
+        operationsCountByBeneficiaryIndex.length = 0;
     }
 
     /**
