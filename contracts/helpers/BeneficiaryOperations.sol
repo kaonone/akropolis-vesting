@@ -21,14 +21,17 @@ contract BeneficiaryOperations {
     bytes32[] public allOperations;
     address internal insideCallSender;
     uint256 internal insideCallCount;
+    uint8[] internal  operationsCountByBeneficiaryIndex;
 
     // Reverse lookup tables for beneficiaries and allOperations
     mapping(address => uint8) public beneficiariesIndices; // Starts from 1, size 255
     mapping(bytes32 => uint) public allOperationsIndicies;
+    
 
     // beneficiaries voting mask per operations
     mapping(bytes32 => uint256) public votesMaskByOperation;
     mapping(bytes32 => uint256) public votesCountByOperation;
+    mapping(bytes32 => uint8) internal  operationsByBeneficiaryIndex;
 
     // EVENTS
 
@@ -53,6 +56,12 @@ contract BeneficiaryOperations {
     function allOperationsCount() public view returns(uint) {
         return allOperations.length;
     }
+
+    function operationLimitByBeneficiaryIndex(uint8 beneficiaryIndex) internal view returns(bool) {
+        //only 3 pending operations
+        return operationsCountByBeneficiaryIndex[beneficiaryIndex] <= 3;
+    }
+
 
     // MODIFIERS
 
@@ -150,7 +159,7 @@ contract BeneficiaryOperations {
             return true;
         }
         
-
+        
         require((isExistBeneficiary(msg.sender) && (beneficiariesIndices[msg.sender] <= beneficiaries.length)), "checkHowManyBeneficiaries: msg.sender is not an beneficiary");
 
         uint beneficiaryIndex = beneficiariesIndices[msg.sender].sub(1);
@@ -158,12 +167,22 @@ contract BeneficiaryOperations {
         bytes32 operation = keccak256(abi.encodePacked(msg.data, beneficiariesGeneration));
 
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
+        //check limit for operation
+        require(operationLimitByBeneficiaryIndex(uint8(beneficiaryIndex)), "checkHowManyBeneficiaries: operation limit is reached for this beneficiary");
+
         votesMaskByOperation[operation] |= (2 ** beneficiaryIndex);
         uint operationVotesCount = votesCountByOperation[operation].add(1);
         votesCountByOperation[operation] = operationVotesCount;
+
         if (operationVotesCount == 1) {
             allOperationsIndicies[operation] = allOperations.length;
+            
+            operationsByBeneficiaryIndex[operation] = uint8(beneficiaryIndex);
+            operationsCountByBeneficiaryIndex[beneficiaryIndex] = uint8(operationsCountByBeneficiaryIndex[beneficiaryIndex].add(1));
+
             allOperations.push(operation);
+            
+            
             emit OperationCreated(operation, howMany, beneficiaries.length, msg.sender);
         }
         emit OperationUpvoted(operation, operationVotesCount, howMany, beneficiaries.length, msg.sender);
@@ -190,9 +209,13 @@ contract BeneficiaryOperations {
         }
         allOperations.length = allOperations.length.sub(1);
 
+        uint8 beneficiaryIndex = uint8(operationsByBeneficiaryIndex[operation]);
+        operationsCountByBeneficiaryIndex[beneficiaryIndex] = uint8(operationsCountByBeneficiaryIndex[beneficiaryIndex].sub(1));
+
         delete votesMaskByOperation[operation];
         delete votesCountByOperation[operation];
         delete allOperationsIndicies[operation];
+        delete operationsByBeneficiaryIndex[operation];
     }
 
     // PUBLIC METHODS
@@ -254,9 +277,13 @@ contract BeneficiaryOperations {
             delete(allOperationsIndicies[allOperations[i]]);
             delete(votesMaskByOperation[allOperations[i]]);
             delete(votesCountByOperation[allOperations[i]]);
+            //delete operation->beneficiaryIndex
+            delete(operationsByBeneficiaryIndex[allOperations[i]]);
         }
 
         allOperations.length = 0;
+        //delete operations count for beneficiary
+        operationsCountByBeneficiaryIndex.length = 0;
        
         beneficiariesGeneration++;
     }
