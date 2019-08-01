@@ -27,7 +27,6 @@ contract('BeneficiaryOperations', function ([_, wallet1, wallet2, wallet3, walle
     it('should transfer Beneficiarieship 1 => 1 correctly', async function () {
         const obj = await BeneficiaryOperations.new();
 
-        console.log(wallet1);
         await obj.transferBeneficiaryShip([wallet1]);
 
         (await obj.beneficiaries.call(0)).should.be.equal(wallet1);

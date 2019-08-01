@@ -5,17 +5,17 @@ import '../openzeppelin/TokenVesting.sol';
 //Beneficieries template
 import "../helpers/BeneficiaryOperations.sol";
 
-contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
+contract AkropolisTokenVesting is TokenVesting, BeneficiaryOperations {
 
     IERC20 private token;
 
-    address private pendingBeneficiary;
+    address private _pendingBeneficiary;
 
     event LogBeneficiaryTransferProposed(address _beneficiary);
     event LogBeneficiaryTransfered(address _beneficiary);
 
-    constructor (IERC20 _token, address _beneficiary, uint256 _start, uint256 _cliffDuration, uint256 _duration, bool _revocable) public 
-        TokenVesting(_beneficiary, _start, _cliffDuration, _duration, _revocable) {
+    constructor (IERC20 _token, uint256 _start, uint256 _cliffDuration, uint256 _duration) public 
+        TokenVesting(msg.sender, _start, _cliffDuration, _duration, false) {
             token = _token;
         }
 
@@ -41,9 +41,23 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
     */
 
     modifier onlyPendingBeneficiary {
-        require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+        require(msg.sender  == _pendingBeneficiary, "Unpermitted operation.");
         _;
     }
+
+    function pendingBeneficiary() public view returns (address) {
+        return _pendingBeneficiary;
+    }
+
+     /**
+        * @dev Allows beneficiaries to change beneficiaryShip and set first beneficiary as default
+        * @param _newBeneficiaries defines array of addresses of new beneficiaries
+    */
+    function transferBeneficiaryShip(address[] memory _newBeneficiaries) public {
+        super.transferBeneficiaryShip(_newBeneficiaries);
+        _setPendingBeneficiary(beneficiaries[0]);
+    }
+
      /**
         * @dev Allows beneficiaries to change beneficiaryShip and set first beneficiary as default
         * @param _newBeneficiaries defines array of addresses of new beneficiaries
@@ -67,9 +81,9 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
         * @dev Claim Beneficiary
     */
     function claimBeneficiary() public onlyPendingBeneficiary {
-        _changeBeneficiary(pendingBeneficiary);
-        emit LogBeneficiaryTransfered(pendingBeneficiary);
-        pendingBeneficiary = address(0);
+        _changeBeneficiary(_pendingBeneficiary);
+        emit LogBeneficiaryTransfered(_pendingBeneficiary);
+        _pendingBeneficiary = address(0);
     }
 
     /*
@@ -81,7 +95,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
         * @param _newBeneficiary defines address of new beneficiary
     */
     function _setPendingBeneficiary(address _newBeneficiary) internal onlyExistingBeneficiary(_newBeneficiary) {
-        pendingBeneficiary = _newBeneficiary;
+        _pendingBeneficiary = _newBeneficiary;
         emit LogBeneficiaryTransferProposed(_newBeneficiary);
     }
 }

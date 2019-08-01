@@ -53,6 +53,16 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
             _setPendingBeneficiary(beneficiaries[0]);
         }
 
+         /**
+            * @dev Allows beneficiaries to change beneficiaryShip and set first beneficiary as default
+            * @param _newBeneficiaries defines array of addresses of new beneficiaries
+        */
+
+        function transferBeneficiaryShip(address[] memory _newBeneficiaries) public {
+            super.transferBeneficiaryShip(_newBeneficiaries);
+            _setPendingBeneficiary(beneficiaries[0]);
+        }
+
         /**
             * @dev Allows beneficiaries to change beneficiary as default
             * @param _newBeneficiary defines address of new beneficiary
