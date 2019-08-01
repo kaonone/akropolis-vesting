@@ -42,14 +42,6 @@ contract TokenTimelock {
     }
 
     /**
-     * @return change the beneficiary of tokens
-     */
-
-    function changeBeneficiary(address _newBeneficiary) public {
-        _beneficiary = _newBeneficiary;
-    }
-
-    /**
      * @return the time when the tokens are released.
      */
     function releaseTime() public view returns (uint256) {
@@ -67,5 +59,13 @@ contract TokenTimelock {
         require(amount > 0, "TokenTimelock: no tokens to release");
 
         _token.safeTransfer(_beneficiary, amount);
+    }
+
+     /**
+     * @return change the beneficiary of tokens
+     */
+
+    function _changeBeneficiary(address _newBeneficiary) internal {
+        _beneficiary = _newBeneficiary;
     }
 }

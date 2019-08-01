@@ -65,7 +65,7 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
             * @dev Claim Beneficiary
         */
         function claimBeneficiary() public onlyPendingBeneficiary {
-            super.changeBeneficiary(_pendingBeneficiary);
+            _changeBeneficiary(_pendingBeneficiary);
             emit LogBeneficiaryTransfered(_pendingBeneficiary);
             _pendingBeneficiary = address(0);
         }

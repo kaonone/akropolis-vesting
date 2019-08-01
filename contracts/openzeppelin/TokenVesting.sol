@@ -176,7 +176,7 @@ contract TokenVesting is Ownable {
      * @return change the beneficiary of tokens
      */
 
-    function changeBeneficiary(address _newBeneficiary) public {
+    function _changeBeneficiary(address _newBeneficiary) internal {
         _beneficiary = _newBeneficiary;
     }
 }

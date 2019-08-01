@@ -67,7 +67,7 @@ contract AkropolisVesting is TokenVesting, BeneficiaryOperations {
         * @dev Claim Beneficiary
     */
     function claimBeneficiary() public onlyPendingBeneficiary {
-        super.changeBeneficiary(pendingBeneficiary);
+        _changeBeneficiary(pendingBeneficiary);
         emit LogBeneficiaryTransfered(pendingBeneficiary);
         pendingBeneficiary = address(0);
     }
