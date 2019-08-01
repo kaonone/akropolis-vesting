@@ -1,6 +1,8 @@
 
 const HDWalletProvider = require("truffle-hdwallet-provider");
 require('dotenv').config()  // Stores environment-specific variable from '.env' to process.env
+require('babel-register');
+require('babel-polyfill');
 
 
 console.log(process.env.METAMASK_MNEMONIC);
@@ -12,7 +14,7 @@ module.exports = {
 	networks: {
 		development: {
 			host: 'localhost',
-			port: 8545,
+			port: 9545,
 			network_id: '*',
 			gas: 4600000
 		},
@@ -29,7 +31,7 @@ module.exports = {
 		
 		kovan: {
 	          provider: function () {
-	          return new HDWalletProvider(process.env.METAMASK_MNEMONIC, "https://kovan.infura.io/v3/" + process.env.INFURA_API_KEY)
+	          return new HDWalletProvider(process.env.METAMASK_MNEMONIC, "https://kovan.infura.io/v3/" + process.env.INFURA_API_KEY, 2)
 	      },
 	      network_id: 42,
 	      gas: 7000000

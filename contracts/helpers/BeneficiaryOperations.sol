@@ -1,7 +1,7 @@
 /*
   License: MIT
   Copyright Bitclave, 2018
-  It's modified contract MultiOwnable from https://github.com/bitclave/Multiownable
+  It's modified contract BeneficiaryOperations from https://github.com/bitclave/BeneficiaryOperations
 */
 
 pragma solidity ^0.5.0;
@@ -21,7 +21,7 @@ contract BeneficiaryOperations {
     bytes32[] public allOperations;
     address internal insideCallSender;
     uint256 internal insideCallCount;
-    uint8[] internal  operationsCountByBeneficiaryIndex;
+    
 
     // Reverse lookup tables for beneficiaries and allOperations
     mapping(address => uint8) public beneficiariesIndices; // Starts from 1, size 255
@@ -31,8 +31,10 @@ contract BeneficiaryOperations {
     // beneficiaries voting mask per operations
     mapping(bytes32 => uint256) public votesMaskByOperation;
     mapping(bytes32 => uint256) public votesCountByOperation;
-    mapping(bytes32 => uint8) internal  operationsByBeneficiaryIndex;
 
+    //operation -> beneficiaryIndex
+    mapping(bytes32 => uint8) internal  operationsByBeneficiaryIndex;
+    mapping(uint8 => uint8) internal operationsCountByBeneficiaryIndex;
     // EVENTS
 
     event BeneficiaryshipTransferred(address[] previousbeneficiaries, uint howManyBeneficiariesDecide, address[] newBeneficiaries, uint newHowManybeneficiarysDecide);
@@ -57,9 +59,28 @@ contract BeneficiaryOperations {
         return allOperations.length;
     }
 
-    function operationLimitByBeneficiaryIndex(uint8 beneficiaryIndex) internal view returns(bool) {
-        //only 3 pending operations
-        return operationsCountByBeneficiaryIndex[beneficiaryIndex] <= 3;
+    /*
+      Internal functions
+    */
+
+    function _operationLimitByBeneficiaryIndex(uint8 beneficiaryIndex) internal view returns(bool) {
+        return (operationsCountByBeneficiaryIndex[beneficiaryIndex] <= 3);
+    }
+    
+    function _cancelAllPending() internal {
+        for (uint i = 0; i < allOperations.length; i++) {
+            delete(allOperationsIndicies[allOperations[i]]);
+            delete(votesMaskByOperation[allOperations[i]]);
+            delete(votesCountByOperation[allOperations[i]]);
+            //delete operation->beneficiaryIndex
+            delete(operationsByBeneficiaryIndex[allOperations[i]]);
+        }
+
+        allOperations.length = 0;
+        //delete operations count for beneficiary
+        for (uint8 j = 0; j < beneficiaries.length; j++) {
+            operationsCountByBeneficiaryIndex[j] = 0;
+        }
     }
 
 
@@ -168,7 +189,7 @@ contract BeneficiaryOperations {
 
         require((votesMaskByOperation[operation] & (2 ** beneficiaryIndex)) == 0, "checkHowManyBeneficiaries: beneficiary already voted for the operation");
         //check limit for operation
-        require(operationLimitByBeneficiaryIndex(uint8(beneficiaryIndex)), "checkHowManyBeneficiaries: operation limit is reached for this beneficiary");
+        require(_operationLimitByBeneficiaryIndex(uint8(beneficiaryIndex)), "checkHowManyBeneficiaries: operation limit is reached for this beneficiary");
 
         votesMaskByOperation[operation] |= (2 ** beneficiaryIndex);
         uint operationVotesCount = votesCountByOperation[operation].add(1);
@@ -178,8 +199,9 @@ contract BeneficiaryOperations {
             allOperationsIndicies[operation] = allOperations.length;
             
             operationsByBeneficiaryIndex[operation] = uint8(beneficiaryIndex);
-            operationsCountByBeneficiaryIndex[beneficiaryIndex] = uint8(operationsCountByBeneficiaryIndex[beneficiaryIndex].add(1));
-
+            
+            operationsCountByBeneficiaryIndex[uint8(beneficiaryIndex)] = uint8(operationsCountByBeneficiaryIndex[uint8(beneficiaryIndex)].add(1));
+            
             allOperations.push(operation);
             
             
@@ -245,18 +267,12 @@ contract BeneficiaryOperations {
     */
 
     function cancelAllPending() public onlyAnyBeneficiary {
-        for (uint i=0; i<allOperations.length; i++) {
-            delete(allOperationsIndicies[allOperations[i]]);
-            delete(votesMaskByOperation[allOperations[i]]);
-            delete(votesCountByOperation[allOperations[i]]);
-            //delete operation->beneficiaryIndex
-            delete(operationsByBeneficiaryIndex[allOperations[i]]);
-        }
-
-        allOperations.length = 0;
-        //delete operations count for beneficiary
-        operationsCountByBeneficiaryIndex.length = 0;
+       _cancelAllPending();
     }
+
+
+
+    /**Переписать*/
 
     /**
     * @dev Allows beneficiaries to change beneficiariesship
@@ -278,7 +294,7 @@ contract BeneficiaryOperations {
         require(newHowManyBeneficiariesDecide <= newBeneficiaries.length, "transferBeneficiaryShipWithHowMany: newHowManybeneficiarysDecide exceeds the number of beneficiarys");
 
         // Reset beneficiaries reverse lookup table
-        for (uint j = 1; j <= beneficiaries.length; j++) {
+        for (uint j = 0; j < beneficiaries.length; j++) {
             delete beneficiariesIndices[beneficiaries[j]];
         }
         for (uint i = 0; i < newBeneficiaries.length; i++) {
@@ -291,19 +307,8 @@ contract BeneficiaryOperations {
         beneficiaries = newBeneficiaries;
         howManyBeneficiariesDecide = newHowManyBeneficiariesDecide;
 
-        for (uint i=0; i<allOperations.length; i++) {
-            delete(allOperationsIndicies[allOperations[i]]);
-            delete(votesMaskByOperation[allOperations[i]]);
-            delete(votesCountByOperation[allOperations[i]]);
-            //delete operation->beneficiaryIndex
-            delete(operationsByBeneficiaryIndex[allOperations[i]]);
-        }
-
-        allOperations.length = 0;
-        //delete operations count for beneficiary
-        operationsCountByBeneficiaryIndex.length = 0;
+        _cancelAllPending();
        
         beneficiariesGeneration++;
     }
-
 }

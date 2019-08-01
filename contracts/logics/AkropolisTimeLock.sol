@@ -6,7 +6,7 @@ import "../helpers/BeneficiaryOperations.sol";
 
 contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
 
-        address private pendingBeneficiary;
+        address private _pendingBeneficiary;
 
 
         event LogBeneficiaryTransferProposed(address _beneficiary);
@@ -15,12 +15,12 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         /**
         * @notice Constructor.
         * @param _token  Address of AKRO token
-        * @param _beneficiary Beneficiary address
         * @param _releaseTime Timestamp date
         */
 
-        constructor (IERC20 _token, address _beneficiary, uint256 _releaseTime) public
-            TokenTimelock(_token, _beneficiary, _releaseTime) {}  
+        constructor (IERC20 _token, uint256 _releaseTime) public
+            TokenTimelock(_token, msg.sender, _releaseTime) {
+        }  
 
         // MODIFIERS
         /**
@@ -35,8 +35,12 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
         * @dev Allows to perform method by pending beneficiary
         */
         modifier onlyPendingBeneficiary {
-            require(msg.sender  == pendingBeneficiary, "Unpermitted operation.");
+            require(msg.sender  == _pendingBeneficiary, "Unpermitted operation.");
             _;
+        }
+
+        function pendingBeneficiary() public view returns (address) {
+            return _pendingBeneficiary;
         }
 
         /**
@@ -61,9 +65,9 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
             * @dev Claim Beneficiary
         */
         function claimBeneficiary() public onlyPendingBeneficiary {
-            super.changeBeneficiary(pendingBeneficiary);
-            emit LogBeneficiaryTransfered(pendingBeneficiary);
-            pendingBeneficiary = address(0);
+            super.changeBeneficiary(_pendingBeneficiary);
+            emit LogBeneficiaryTransfered(_pendingBeneficiary);
+            _pendingBeneficiary = address(0);
         }
 
         /*
@@ -75,7 +79,7 @@ contract AkropolisTimeLock is TokenTimelock, BeneficiaryOperations {
             * @param _newBeneficiary defines address of new beneficiary
         */
         function _setPendingBeneficiary(address _newBeneficiary) internal onlyExistingBeneficiary(_newBeneficiary) {
-            pendingBeneficiary = _newBeneficiary;
+            _pendingBeneficiary = _newBeneficiary;
             emit LogBeneficiaryTransferProposed(_newBeneficiary);
         }
 }
