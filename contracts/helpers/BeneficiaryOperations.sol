@@ -4,7 +4,7 @@
   It's modified contract BeneficiaryOperations from https://github.com/bitclave/BeneficiaryOperations
 */
 
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.9;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
