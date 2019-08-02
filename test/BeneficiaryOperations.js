@@ -198,6 +198,24 @@ contract('BeneficiaryOperations', function ([_, wallet1, wallet2, wallet3, walle
         (await obj.beneficiariesCount.call()).toNumber().should.be.equal(2);
     });
 
+
+    it('should transfer Beneficiarieship 5 => 3 correctly', async function () {
+        const obj = await BeneficiaryOperations.new();
+
+        await obj.transferBeneficiaryShipWithHowMany([wallet1, wallet2, wallet3, wallet4, wallet5], 3);
+        
+
+        (await obj.beneficiaries.call(0)).should.be.equal(wallet1);
+        (await obj.beneficiaries.call(1)).should.be.equal(wallet2);
+
+
+        await obj.transferBeneficiaryShip([wallet4, wallet5], { from: wallet1 });
+        await obj.transferBeneficiaryShip([wallet4, wallet5], { from: wallet2 });
+        await obj.transferBeneficiaryShip([wallet4, wallet5], { from: wallet3 });
+        
+        (await obj.beneficiariesCount.call()).toNumber().should.be.equal(2);
+    });
+
     it('should transfer Beneficiarieship 1,3 of 3 => 2 correctly', async function () {
         const obj = await BeneficiaryOperations.new();
 
