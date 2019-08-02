@@ -266,7 +266,7 @@ contract BeneficiaryOperations {
     * @dev Allows beneficiaries to change their mind by cancelling all operations
     */
 
-    function cancelAllPending() public onlyAnyBeneficiary {
+    function cancelAllPending() public onlyManyBeneficiaries {
        _cancelAllPending();
     }
 
