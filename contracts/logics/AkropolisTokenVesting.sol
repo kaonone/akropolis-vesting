@@ -30,7 +30,7 @@ contract AkropolisTokenVesting is TokenVesting, BeneficiaryOperations {
     /**
      * @return the token being held.
      */
-    function token() public view returns (IERC20) {
+    function tokenAddress() public view returns (IERC20) {
         return token;
     }
 
