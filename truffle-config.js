@@ -25,10 +25,10 @@ module.exports = {
 
 		mainnet: {
 			  provider: function () {
-	          return new HDWalletProvider(process.env.METAMASK_MNEMONIC, "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY)
+	          return new HDWalletProvider(process.env.METAMASK_MNEMONIC, "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY, 2)
 	      },
 	      network_id: 1,
-	      network_id: 1,       // Ropsten's id
+	      network_id: 1,
      	  gas: 7000000,
      	  skipDryRun:true
 		},
