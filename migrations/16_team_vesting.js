@@ -4,10 +4,10 @@ var AkropolisTokenVesting= artifacts.require("./AkropolisTokenVesting.sol");
 module.exports = function(deployer, network, accounts) {
   let owner = accounts[0];
   
-  let token = "0xC4375B7De8af5a38a93548eb8453a498222C4fF2";
-  let start = 1564740000;
-  let cliffDuration = 1800;
-  let duration = 7200;
+  let token = "0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7"; //AKRO
+  let start = 1592265660; // 16.07.2020
+  let cliffDuration = 2592000; //30 days
+  let duration = 60480000; //700 days
 
   //console.log('owner of storage contracts: ' + owner)
 
