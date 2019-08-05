@@ -27,6 +27,14 @@ contract AkropolisTokenVesting is TokenVesting, BeneficiaryOperations {
         super.release(token);
     }
 
+
+     /**
+     * @return the token being held.
+     */
+    function tokenAddress() public view returns (IERC20) {
+        return token;
+    }
+
     // MODIFIERS
     /**
     * @dev Allows to perform method by existing beneficiary
