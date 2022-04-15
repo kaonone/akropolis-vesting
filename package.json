@@ -23,6 +23,7 @@
     "chai-bignumber": "^2.0.2",
     "dotenv": "^6.0.0",
     "eth-gas-reporter": "^0.2.3",
+    "ethereumjs-util": "^7.1.4",
     "ethjs-abi": "^0.2.1",
     "openzeppelin-solidity": "2.3.0",
     "truffle-contract": "4.0.23",
