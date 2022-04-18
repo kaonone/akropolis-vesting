@@ -1,3 +1,3 @@
 export function toSeconds(dateString) {
-  return (new Date(dateString) / 1000);
+  return Math.round(new Date(dateString) / 1000);
 }

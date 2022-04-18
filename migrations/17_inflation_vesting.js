@@ -1,17 +1,19 @@
-var AkropolisTokenVesting= artifacts.require("./AkropolisTokenVesting.sol");
+var AkropolisTokenVesting = artifacts.require('./AkropolisTokenVesting.sol');
 
+module.exports = async function (deployer, network, accounts) {
+  const owner = accounts[0];
 
-module.exports = function(deployer, network, accounts) {
-  let owner = accounts[0];
-  
-  let token = "0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7"; //AKRO
-  let start = 1640970000; // 01.01.2022
-  let cliffDuration = 0;
-  let duration = 157680000; // 31.12.2026 - 01.01.2022
+  const token =
+    network === 'mainnet'
+      ? '0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7'
+      : '0xcbB03b0247688552ca34a4cE910b3254A420c523';
+  const start = 1640995200; // 01.01.2022
+  const cliffDuration = 0;
+  const duration = 157766399; // 31.12.2026 - 01.01.2022
 
-  //console.log('owner of storage contracts: ' + owner)
+  console.log('owner of storage contracts: ' + owner);
 
-  deployer.deploy(AkropolisTokenVesting, token, start, cliffDuration, duration, {from: owner});
-  
+  await deployer.deploy(AkropolisTokenVesting, token, start, cliffDuration, duration, {
+    from: owner,
+  });
 };
-
