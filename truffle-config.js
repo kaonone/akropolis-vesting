@@ -27,11 +27,12 @@ module.exports = {
         return new HDWalletProvider(
           process.env.METAMASK_MNEMONIC,
           'https://mainnet.infura.io/v3/' + process.env.INFURA_API_KEY,
-          2
+          0
         );
       },
       network_id: 1,
       gas: 7000000,
+      gasPrice: 30000000000,
       skipDryRun: true,
     },
 
@@ -53,7 +54,8 @@ module.exports = {
         return new HDWalletProvider(
           process.env.METAMASK_MNEMONIC,
           'https://rinkeby.infura.io/v3/' + process.env.INFURA_API_KEY,
-          0
+          0,
+          2
         );
       },
       network_id: 4,

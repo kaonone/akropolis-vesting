@@ -7,9 +7,9 @@ module.exports = async function (deployer, network, accounts) {
     network === 'mainnet'
       ? '0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7'
       : '0xcbB03b0247688552ca34a4cE910b3254A420c523';
-  const start = 1640995200; // 01.01.2022
+  const start = 1643328000; // 28.01.2022
   const cliffDuration = 0;
-  const duration = 157766399; // 31.12.2026 - 01.01.2022
+  const duration = 126230399; // 27.01.2026 - 28.01.2022
 
   console.log('owner of storage contracts: ' + owner);
 
