@@ -3,6 +3,11 @@ require('dotenv').config(); // Stores environment-specific variable from '.env' 
 require('babel-register');
 require('babel-polyfill');
 
+// because truffle-plugin-verify uses Array.at
+Array.prototype.at = function (pos) {
+  return pos >= 0 ? this[pos] : this[this.length + pos];
+};
+
 console.log(process.env.METAMASK_MNEMONIC);
 console.log(process.env.INFURA_API_KEY);
 module.exports = {
@@ -27,12 +32,26 @@ module.exports = {
         return new HDWalletProvider(
           process.env.METAMASK_MNEMONIC,
           'https://mainnet.infura.io/v3/' + process.env.INFURA_API_KEY,
-          0
+          8
         );
       },
       network_id: 1,
-      gas: 7000000,
+      gas: 4000000,
       gasPrice: 30000000000,
+      skipDryRun: true,
+    },
+
+    sepolia: {
+      provider: function () {
+        return new HDWalletProvider(
+          process.env.METAMASK_MNEMONIC,
+          'https://sepolia.infura.io/v3/' + process.env.INFURA_API_KEY,
+          8
+        );
+      },
+      network_id: 11155111,
+      gas: 4000000,
+      gasPrice: 130166207251,
       skipDryRun: true,
     },
 
